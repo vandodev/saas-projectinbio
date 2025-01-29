@@ -1,5 +1,5 @@
 export default function Home() {
   return (
-    <h1>Olá mundo</h1>
+    <div className="bg-background-primary">Hello World</div>
   );
 }
