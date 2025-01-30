@@ -1,3 +1,4 @@
+import "./globals.css";
 import { Red_Hat_Display } from 'next/font/google'
 
 const redHatDisplay = Red_Hat_Display({
