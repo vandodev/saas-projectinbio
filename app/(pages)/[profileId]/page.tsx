@@ -3,6 +3,8 @@ import TotalVisits from "@/app/components/commons/total-visits";
 import UserCard from "@/app/components/commons/user-card";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getProfileData } from "@/app/server/get-profile-data";
 
 export default async function ProfilePage({
   params,
@@ -10,6 +12,13 @@ export default async function ProfilePage({
     params: Promise<{ profileId: string }>;
 }) {
   const { profileId } = await params;
+
+  const profileData = await getProfileData(profileId);
+
+  if (!profileData) return notFound();
+
+  console.log(profileData) 
+
   return (
     <div className="relative h-screen flex p-20 overflow-hidden">
       <div className="fixed top-0 left-0 w-full flex justify-center items-center gap-1 py-2 bg-background-tertiary">
