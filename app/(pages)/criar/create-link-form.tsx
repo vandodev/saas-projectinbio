@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { sanitizeLink } from "@/app/lib/utils";
 import { verifyLink } from "@/app/actions/verify-link";
+import { createLink } from "@/app/actions/create-link";
 
 import Button from "@/app/components/ui/button";
 import TextInput from "@/app/components/ui/text-input";
@@ -30,6 +31,14 @@ export default function CreateLinkForm() {
     const isLinkTaken = await verifyLink(link);
 
     if (isLinkTaken) return setError("Desculpe, esse link já está em uso.");
+
+    // Criar o perfil
+    const isLinkCreated = await createLink(link);
+
+    if (!isLinkCreated)
+      return setError("Erro ao criar o perfil. Tente novamente.");
+
+    router.push(`/${link}`);
     
   }
 
