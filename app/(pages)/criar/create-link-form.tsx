@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { sanitizeLink } from "@/app/lib/utils";
+import { verifyLink } from "@/app/actions/verify-link";
 
 import Button from "@/app/components/ui/button";
 import TextInput from "@/app/components/ui/text-input";
 
 export default function CreateLinkForm() {
+
+  const router = useRouter();
 
   const [link, setLink] = useState("");
   const [error, setError] = useState("");
@@ -16,9 +20,22 @@ export default function CreateLinkForm() {
     setError("");
   }
 
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    // Quando o usuario nao escreve um link
+    if (link.length === 0) return setError("Escolha um link primeiro :)");
+
+    // Quando o usuario escolhe um link ja existente
+    const isLinkTaken = await verifyLink(link);
+
+    if (isLinkTaken) return setError("Desculpe, esse link já está em uso.");
+    
+  }
+
   return (
     <>
-      <form  className="w-full flex items-center gap-2">
+      <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
         <span>projectinbio.com/</span>
         <TextInput value={link} onChange={handleLinkChange}  />
         <Button className="w-[126px]">Criar</Button>
