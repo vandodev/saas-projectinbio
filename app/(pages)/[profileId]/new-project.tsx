@@ -12,9 +12,25 @@ export default function NewProject({ profileId }: { profileId: string }) {
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [projectImage, setProjectImage] = useState<string | null>(null);   
+
     const handleOpenModal = () => {
       setIsOpen(true);
     };
+
+    function triggerImageInput(id: string) {
+      document.getElementById(id)?.click();
+    }
+
+    //Cria url temporária
+    function handleImageInput(e: React.ChangeEvent<HTMLInputElement>) {
+      const file = e.target.files?.[0] ?? null;
+      if (file) {
+        const imageURL = URL.createObjectURL(file);
+        return imageURL;
+      }
+      return null;
+    }
 
     return(
         <>
@@ -32,19 +48,35 @@ export default function NewProject({ profileId }: { profileId: string }) {
             <div className="flex gap-10">
               <div className="flex flex-col items-center gap-3 text-xs">
                 <div className="w-[100px] h-[100px] rounded-xl bg-background-tertiary overflow-hidden">
-                  <button className="w-full h-full">100x100</button>
+                 
+                {projectImage ? (
+                  <img
+                    src={projectImage}
+                    alt="Project Image"
+                    className="object-cover object-center"
+                  />
+                ) : (
+                  <button
+                    className="w-full h-full"
+                    onClick={() => triggerImageInput("imageInput")}
+                  >
+                    100x100
+                  </button>
+                )}
+
                 </div>
 
                 <button className="text-white flex items-center gap-2">
                   <ArrowUpFromLine className="size-4" />
                   <span>Adicionar imagem</span>
                 </button>
-                
+
                 <input
                   type="file"
                   id="imageInput"
                   accept="image/*"
                   className="hidden"
+                  onChange={(e) => setProjectImage(handleImageInput(e))}
                 />
               </div>
 
