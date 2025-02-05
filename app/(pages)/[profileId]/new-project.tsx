@@ -7,12 +7,13 @@ import Button from "@/app/components/ui/button";
 import TextArea from "@/app/components/ui/text-area";
 import TextInput from "@/app/components/ui/text-input";
 import { ArrowUpFromLine, Plus } from "lucide-react";
+import { compressFiles } from "@/app/lib/utils";
 
 export default function NewProject({ profileId }: { profileId: string }) {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [projectImage, setProjectImage] = useState<string | null>(null);   
+    const [projectImage, setProjectImage] = useState<string | null>(null);
 
     const handleOpenModal = () => {
       setIsOpen(true);
@@ -30,6 +31,17 @@ export default function NewProject({ profileId }: { profileId: string }) {
         return imageURL;
       }
       return null;
+    }
+
+    async function handleCreateProject() {
+      const imagesInput = document.getElementById(
+        "imageInput"
+      ) as HTMLInputElement;
+  
+      if (!imagesInput.files?.length) return;
+  
+      const compressedFile = await compressFiles(Array.from(imagesInput.files));  
+    
     }
 
     return(
@@ -66,7 +78,10 @@ export default function NewProject({ profileId }: { profileId: string }) {
 
                 </div>
 
-                <button className="text-white flex items-center gap-2">
+                <button
+                  className="text-white flex items-center gap-2"
+                  onClick={() => triggerImageInput("imageInput")}
+                >
                   <ArrowUpFromLine className="size-4" />
                   <span>Adicionar imagem</span>
                 </button>
@@ -120,8 +135,13 @@ export default function NewProject({ profileId }: { profileId: string }) {
             </div>
 
             <div className="flex gap-4 justify-end">
-              <button className="font-bold text-white">Voltar</button>
-              <Button>Salvar</Button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="font-bold text-white"
+              >
+                Voltar
+              </button>
+              <Button onClick={handleCreateProject}>Salvar</Button>
             </div>
           </div>
         </Modal>
