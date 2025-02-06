@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { startTransition, useState } from "react";
 
 import Modal from "@/app/components/ui/modal";
 import Button from "@/app/components/ui/button";
@@ -8,12 +8,19 @@ import TextArea from "@/app/components/ui/text-area";
 import TextInput from "@/app/components/ui/text-input";
 import { ArrowUpFromLine, Plus } from "lucide-react";
 import { compressFiles } from "@/app/lib/utils";
+import { useRouter } from "next/navigation";
+import { createProject } from "@/app/actions/create-project";
 
 export default function NewProject({ profileId }: { profileId: string }) {
+    const router = useRouter();
 
     const [isOpen, setIsOpen] = useState(false);
-
+    const [projectName, setProjectName] = useState("");
+    const [projectDescription, setProjectDescription] = useState("");
+    const [projectUrl, setProjectUrl] = useState("");
     const [projectImage, setProjectImage] = useState<string | null>(null);
+    const [isCreatingProject, setIsCreatingProject] = useState(false);
+
 
     const handleOpenModal = () => {
       setIsOpen(true);
@@ -34,14 +41,35 @@ export default function NewProject({ profileId }: { profileId: string }) {
     }
 
     async function handleCreateProject() {
+      setIsCreatingProject(true);
       const imagesInput = document.getElementById(
         "imageInput"
       ) as HTMLInputElement;
   
       if (!imagesInput.files?.length) return;
   
-      const compressedFile = await compressFiles(Array.from(imagesInput.files));  
-    
+      const compressedFile = await compressFiles(Array.from(imagesInput.files));
+  
+      const formData = new FormData();
+  
+      formData.append("file", compressedFile[0]);
+      formData.append("profileId", profileId);
+      formData.append("projectName", projectName);
+      formData.append("projectDescription", projectDescription);
+      formData.append("projectUrl", projectUrl);
+  
+      await createProject(formData);
+  
+      startTransition(() => {
+        setIsOpen(false);
+        setIsCreatingProject(false);
+        setProjectName("");
+        setProjectDescription("");
+        setProjectUrl("");
+        setProjectImage(null);
+  
+        router.refresh();
+      });
     }
 
     return(
@@ -103,6 +131,8 @@ export default function NewProject({ profileId }: { profileId: string }) {
                   <TextInput
                     id="project-name"
                     placeholder="Digite o nome do projeto"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
                   />
                 </div>
 
@@ -117,6 +147,8 @@ export default function NewProject({ profileId }: { profileId: string }) {
                     id="project-description"
                     placeholder="Dê uma breve descrição do seu projeto"
                     className="h-36"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
                   />
                 </div>
 
@@ -128,6 +160,8 @@ export default function NewProject({ profileId }: { profileId: string }) {
                     type="url"
                     id="project-description"
                     placeholder="Digite a URL do projeto"
+                    value={projectUrl}
+                    onChange={(e) => setProjectUrl(e.target.value)}
                   />
                 </div>
 
