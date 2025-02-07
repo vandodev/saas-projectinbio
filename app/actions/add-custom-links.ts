@@ -1,5 +1,6 @@
 "use server";
 import { db } from "../lib/firebase";
+import { auth } from "../lib/auth";
 
 export type Link = {
   title: string;
@@ -17,6 +18,10 @@ export default async function addCustomLinks({
   link2: Link;
   link3: Link;
 }) {
+
+  const session = await auth();
+  if (!session) return;
+  
   try {
     await db.collection("profiles").doc(profileId).update({
       link1,
