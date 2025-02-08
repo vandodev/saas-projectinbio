@@ -29,6 +29,6 @@ export default async function addCustomLinks({
       link3,
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 }
