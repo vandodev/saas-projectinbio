@@ -3,7 +3,7 @@ import { TrendingUp } from "lucide-react";
 export default function TotalVisits({
   totalVisits = 0,
 }: {
-  totalVisits: number;
+  totalVisits?: number;
 }) {
 
   return (
