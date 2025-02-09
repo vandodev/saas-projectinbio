@@ -21,18 +21,44 @@ import { db } from "@/app/lib/firebase";
                 // Usuario completou o checkout - assinatura ou pagamento unico
                 // console.log("usuário completou o checkout")
                 if (event.data.object.payment_status === "paid") {
-                const userId = event.data.object.client_reference_id;
-                if (userId) {
-                    await db.collection("users").doc(userId).update({
-                    isSubscribed: true,
-                    });
+                    const userId = event.data.object.client_reference_id;
+                    if (userId) {
+                        await db.collection("users").doc(userId).update({
+                        isSubscribed: true,
+                        });
+                    }
                 }
-                }
+
+                // Verificar se foi boleto
+ 
+                if (
+                    event.data.object.payment_status === "unpaid" &&
+                    event.data.object.payment_intent
+                ) {
+                    const paymentIntent = await stripe.paymentIntents.retrieve(
+                    event.data.object.payment_intent.toString()
+                    );
+                    const hostedVoucherUrl =
+                    paymentIntent.next_action?.boleto_display_details
+                        ?.hosted_voucher_url;
         
+                    if (hostedVoucherUrl) {
+                    const userEmail = event.data.object.customer_details?.email;
+                    console.log("Enviar email para o cliente com o boleto");
+                    }
+                }        
 
                 break;
             case "checkout.session.async_payment_succeeded":
-                // Usuario pagou o boleto      
+                // Usuario pagou o boleto   
+                if (event.data.object.payment_status === "paid") {
+                    const userId = event.data.object.client_reference_id;
+                    if (userId) {
+                    await db.collection("users").doc(userId).update({
+                        isSubscribed: true,
+                    });
+                    }
+                }   
                 break;
             case "customer.subscription.deleted":
                 // Usuario cancelou a assinatura        
