@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     payment_method_types: isSubscription ? ["card"] : ["card", "boleto"],
     success_url: `${req.headers.get("origin")}/${metadata.profileId}`,
     cancel_url: `${req.headers.get("origin")}/${metadata.profileId}/upgrade`,
+    client_reference_id: userId,
     metadata,
   });
 

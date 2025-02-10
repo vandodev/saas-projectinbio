@@ -61,7 +61,24 @@ import { db } from "@/app/lib/firebase";
                 }   
             break;
             case "customer.subscription.deleted":
-                // Usuario cancelou a assinatura      
+                // Usuario cancelou a assinatura  
+                
+                const subscription = event.data.object;
+                const customerId = subscription.customer as string;
+        
+                if (customerId) {
+                  const customer = (await stripe.customers.retrieve(
+                    customerId
+                  )) as Stripe.Customer;
+        
+                  if (customer && customer.metadata.userId) {
+                    const userId = customer.metadata.userId;
+        
+                    await db.collection("users").doc(userId).update({
+                      isSubscribed: false,
+                    });
+                  }
+                }
                       
             break;
             
