@@ -46,9 +46,9 @@ import { db } from "@/app/lib/firebase";
                     const userEmail = event.data.object.customer_details?.email;
                     console.log("Enviar email para o cliente com o boleto");
                     }
-                }        
+                } 
+            break;
 
-                break;
             case "checkout.session.async_payment_succeeded":
                 // Usuario pagou o boleto   
                 if (event.data.object.payment_status === "paid") {
@@ -59,12 +59,12 @@ import { db } from "@/app/lib/firebase";
                     });
                     }
                 }   
-                break;
+            break;
             case "customer.subscription.deleted":
-                // Usuario cancelou a assinatura        
-                break;
-            default :
-            console.log(`Unhand event type ${event.type}`)
+                // Usuario cancelou a assinatura      
+                      
+            break;
+            
         }
  
      return new NextResponse(null, { status: 200 });
