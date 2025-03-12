@@ -30,9 +30,6 @@ export default async function ProfilePage({
     await increaseProfileVisits(profileId);
   }
 
-  console.log(session)
-  // Se o usuario não estiver mais no trial, nao deixar ver o projeto. Redirecionar para upgrade
-
   if (isOwner && !session?.user.isSubscribed && !session?.user.isTrial) {
     redirect(`/${profileId}/upgrade`);
   }
@@ -70,7 +67,7 @@ export default async function ProfilePage({
 
       {isOwner && (
         <div className="absolute bottom-4 right-0 left-0 w-min mx-auto">
-          <TotalVisits totalVisits={profileData.totalVisits} />
+          <TotalVisits totalVisits={profileData.totalVisits} showBar />
         </div>
       )}
 

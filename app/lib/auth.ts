@@ -31,11 +31,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       await db.collection("users").doc(user.id).update({
         createdAt: Timestamp.now().toMillis(),
+        isSubscribed: false
       });
     },
   },
   callbacks: {
     session({ session, user }) {
+      console.log("Está inscrito auth.ts ->",session?.user.isSubscribed)
       return {
         ...session,
         user: {
